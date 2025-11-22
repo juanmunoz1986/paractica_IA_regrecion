@@ -83,4 +83,4 @@ Se desarrolló una aplicación de escritorio que permite al usuario ingresar sus
 
 1. **Clonar el repositorio:**
    ```bash
-   git clone https://github.com/TU_USUARIO/TU_REPOSITORIO.git
+   git clone https://github.com/juanmunoz1986/paractica_IA_regrecion.git

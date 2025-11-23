@@ -14,7 +14,8 @@ import io
 import joblib
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, precision_score, recall_score, f1_score
+import matplotlib.pyplot as plt
 import tensorflow as tf
 
 
@@ -106,7 +107,7 @@ print("Entrenando con Dropout...")
 history = model.fit(
     X_train, 
     y_train, 
-    epochs=100, 
+    epochs=30, 
     batch_size=32, 
     verbose=1, 
     validation_split=0.1, # Usamos un 10% extra para validar mientras entrena
@@ -116,32 +117,84 @@ history = model.fit(
 # ---------------------------------------------------------
 # 5. EVALUACIÓN
 # ---------------------------------------------------------
-y_pred_prob = model.predict(X_test)
+y_pred_prob = model.predict(X_test, verbose=0)
 y_pred = (y_pred_prob > 0.5).astype(int)
 
 print("\n" + "="*30)
 print("      REPORTE DE MÉTRICAS      ")
 print("="*30)
 
+# Calcular todas las métricas
 cm = confusion_matrix(y_test, y_pred)
+acc = accuracy_score(y_test, y_pred)
+precision = precision_score(y_test, y_pred)
+recall = recall_score(y_test, y_pred)
+f1 = f1_score(y_test, y_pred)
+error = 1 - acc
+
+# Mostrar métricas
 print("\nMatriz de Confusión:")
 print(cm)
+print("\n" + "-"*30)
+print("MÉTRICAS DEL MODELO:")
+print("-"*30)
+print(f"Error: {error:.2f}")
+print(f"Exactitud: {acc:.2f}")
+print(f"Precisión: {precision:.2f}")
+print(f"Exhaustividad: {recall:.2f}")
+print(f"F1-Score: {f1:.2f}")
+print("-"*30)
+
 print("\nReporte de Clasificación:")
 print(classification_report(y_test, y_pred, target_names=['No Tratamiento', 'Si Tratamiento']))
 
-acc = accuracy_score(y_test, y_pred)
-print(f"Precisión Global (Accuracy): {acc * 100:.2f}%")
+# ---------------------------------------------------------
+# 6. VISUALIZACIONES
+# ---------------------------------------------------------
+print("\nGenerando gráficas...")
+
+# 6.1 Gráfica del Error durante el Entrenamiento (simple, como ejemplo)
+plt.figure(figsize=(10, 6))
+plt.plot(history.history['loss'], color='blue', linewidth=2)
+plt.xlabel('Iteración', fontsize=12)
+plt.ylabel('Error', fontsize=12)
+plt.title('Error en función de las Iteraciones', fontsize=14, fontweight='bold')
+plt.grid(True, alpha=0.3)
+plt.ylim(bottom=0)
+plt.tight_layout()
+plt.savefig('error_entrenamiento.png', dpi=300, bbox_inches='tight')
+print("-> Gráfica del error guardada en 'error_entrenamiento.png'")
+plt.show()
+
+# 6.2 Matriz de Confusión Visualizada
+from sklearn.metrics import ConfusionMatrixDisplay
+plt.figure(figsize=(8, 6))
+cm_display = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=['No Tratamiento', 'Sí Tratamiento'])
+cm_display.plot(cmap='Blues', values_format='d')
+plt.title('Matriz de Confusión', fontsize=14, fontweight='bold')
+plt.tight_layout()
+plt.savefig('matriz_confusion.png', dpi=300, bbox_inches='tight')
+print("-> Matriz de confusión guardada en 'matriz_confusion.png'")
+plt.show()
 
 # ---------------------------------------------------------
-# 6. GUARDAR
+# 7. GUARDAR
 # ---------------------------------------------------------
 print("\n" + "="*30)
 print("      GUARDANDO SISTEMA...     ")
 print("="*30)
 
-# 6. GUARDAR (Agrega esta línea extra)
-cols_model = X.columns if hasattr(X, 'columns') else df.drop('treatment', axis=1).columns
-joblib.dump(cols_model, 'columnas_entrenamiento.pkl') 
+# Guardar modelo
+model.save('modelo_salud_mental.keras')
+print("-> Modelo guardado: modelo_salud_mental.keras")
 
-print("-> Archivos guardados: Modelo, Scaler y Columnas.")
-print("¡Proceso finalizado!")
+# Guardar scaler
+joblib.dump(scaler, 'scaler_salud_mental.pkl')
+print("-> Scaler guardado: scaler_salud_mental.pkl")
+
+# Guardar columnas
+cols_model = df.drop('treatment', axis=1).columns
+joblib.dump(cols_model, 'columnas_entrenamiento.pkl')
+print("-> Columnas guardadas: columnas_entrenamiento.pkl")
+
+print("\n¡Proceso finalizado!")

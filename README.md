@@ -74,7 +74,7 @@ Para el desarrollo de este sistema se utilizó el siguiente stack tecnológico:
 ### Interfaz de Usuario (GUI)
 Se desarrolló una aplicación de escritorio que permite al usuario ingresar sus datos mediante formularios y obtener un diagnóstico en tiempo real.
 
-![Interfaz de Usuario](imagen_2.png)
+![Interfaz de Usuario](imagen_3.png)
 *Figura 2. Ejecución del Sistema Experto de Diagnóstico.*
 
 ---

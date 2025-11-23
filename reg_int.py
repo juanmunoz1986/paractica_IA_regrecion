@@ -16,12 +16,12 @@ df = pd.read_csv('Mental Health Dataset.csv')
 
 # Selección de variables poderosas
 columnas_a_usar = [
-    'treatment', 
-    'family_history', 
-    'Growing_Stress', 
-    'Mental_Health_History',
-    'care_options', 
-    'Social_Weakness'
+    'treatment',            # Variable dependiente: Necesita (1) o no necesita (0) tratamiento
+    'family_history',       # Historial Familiar de depresión (1: Sí, 0: No)
+    'Growing_Stress',       # Estrés creciente percibido (1: Sí, 0: No)
+    'Mental_Health_History',# Historial Personal de problemas mentales (1: Sí, 0.5: Quizás, 0: No)
+    'care_options',         # Opciones de cuidado cubiertas por el seguro (1: Sí, 0.5: No seguro, 0: No)
+    'Social_Weakness'       # Debilidad social o aislamiento (1: Sí, 0: No)
 ]
 df = df[columnas_a_usar]
 df = df.fillna('No')
@@ -37,11 +37,29 @@ for col in df.columns:
     df[col] = df[col].replace(traductor)
 
 # 2. Entrenar Modelo
-X = df.drop('treatment', axis=1)
-y = df['treatment']
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+# En este fragmento se prepara el conjunto de datos para entrenar y evaluar
+# el modelo de regresión logística. Se separan las variables independientes
+# (X) de la variable dependiente o de salida (y), y luego se dividen en
+# conjuntos de entrenamiento y prueba.
 
-laRegresion = LogisticRegression(max_iter=1000)
+# 1. 'X' contiene todas las variables independientes (factores predictivos),
+#    es decir, todas las columnas del DataFrame excepto 'treatment'.
+X = df.drop('treatment', axis=1)  # Elimina la columna 'treatment' y devuelve el resto.
+
+# 2. 'y' corresponde a la variable dependiente, es decir, la columna que queremos
+#    predecir ('treatment': si la persona necesita tratamiento o no).
+y = df['treatment']
+
+# 3. Se separan los datos en conjuntos de entrenamiento y de prueba mediante
+#    una división aleatoria controlada:
+#    - X_train, y_train: datos usados para entrenar el modelo.
+#    - X_test, y_test: datos reservados para evaluar el modelo luego del entrenamiento.
+#    - test_size=0.2: el 20% de los datos se reserva para prueba, el 80% para entrenamiento.
+#    - random_state=42: asegura que la división sea reproducible (siempre igual).
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+# ========================================================================
+
+laRegresion = LogisticRegression(max_iter=10000)
 laRegresion.fit(X_train, y_train)
 
 # Extraer coeficientes para usarlos en la interfaz
@@ -106,7 +124,7 @@ def calcular_probabilidad():
 # --- Configuración de la Ventana ---
 ventana = tk.Tk()
 ventana.title("Sistema Experto de Salud Mental")
-ventana.geometry("400x550")
+ventana.geometry("650x550")
 ventana.configure(bg="#f0f0f0") # Color de fondo gris claro
 
 # Estilo de fuente
@@ -123,31 +141,31 @@ frame_inputs = tk.Frame(ventana, bg="#ffffff", bd=2, relief="groove")
 frame_inputs.pack(pady=10, padx=20, fill="x")
 
 # Pregunta 1: Historial Familiar
-tk.Label(frame_inputs, text="1. ¿Historial Familiar de Depresión?", bg="white", font=fuente_label).pack(anchor="w", padx=10, pady=(10,0))
+tk.Label(frame_inputs, text="1. ¿alguien en su familia tiene historial de Depresión?", bg="white", font=fuente_label).pack(anchor="w", padx=10, pady=(10,0))
 combo_familia = ttk.Combobox(frame_inputs, values=["Sí", "No"], state="readonly")
 combo_familia.current(1) # Seleccionar "No" por defecto
 combo_familia.pack(fill="x", padx=10, pady=5)
 
 # Pregunta 2: Estrés
-tk.Label(frame_inputs, text="2. ¿Siente estrés creciente?", bg="white", font=fuente_label).pack(anchor="w", padx=10)
+tk.Label(frame_inputs, text="2. ¿Siente cada vez mas estrés?", bg="white", font=fuente_label).pack(anchor="w", padx=10)
 combo_estres = ttk.Combobox(frame_inputs, values=["Sí", "No"], state="readonly")
 combo_estres.current(1)
 combo_estres.pack(fill="x", padx=10, pady=5)
 
 # Pregunta 3: Historial Personal
-tk.Label(frame_inputs, text="3. ¿Historial Personal previo?", bg="white", font=fuente_label).pack(anchor="w", padx=10)
+tk.Label(frame_inputs, text="3. ¿ha estado alguna vez en terapia psicológica?", bg="white", font=fuente_label).pack(anchor="w", padx=10)
 combo_personal = ttk.Combobox(frame_inputs, values=["Sí", "No", "Quizás"], state="readonly")
 combo_personal.current(1)
 combo_personal.pack(fill="x", padx=10, pady=5)
 
 # Pregunta 4: Opciones de Cuidado
-tk.Label(frame_inputs, text="4. ¿Conoce sus opciones de seguro médico?", bg="white", font=fuente_label).pack(anchor="w", padx=10)
+tk.Label(frame_inputs, text="4. ¿tienes EPS o plan de salud?", bg="white", font=fuente_label).pack(anchor="w", padx=10)
 combo_cuidado = ttk.Combobox(frame_inputs, values=["Sí", "No", "No Seguro"], state="readonly")
 combo_cuidado.current(1)
 combo_cuidado.pack(fill="x", padx=10, pady=5)
 
 # Pregunta 5: Social
-tk.Label(frame_inputs, text="5. ¿Siente aislamiento social?", bg="white", font=fuente_label).pack(anchor="w", padx=10)
+tk.Label(frame_inputs, text="5. ¿Siente aislamiento social en algun espacio, como en el trabajo o en la casa?", bg="white", font=fuente_label).pack(anchor="w", padx=10)
 combo_social = ttk.Combobox(frame_inputs, values=["Sí", "No"], state="readonly")
 combo_social.current(1)
 combo_social.pack(fill="x", padx=10, pady=(5, 10))

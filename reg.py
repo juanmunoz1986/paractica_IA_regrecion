@@ -75,35 +75,10 @@ variables = X.columns
 for i in range(len(variables)):
     print(f" - {variables[i]}: {coef[i]:.4f}")
 
-# ==========================================
-# PASO 4: SISTEMA EXPERTO INTERACTIVO
-# ==========================================
-print("\n-SISTEMA DE DIAGNÓSTICO DE IA ---")
-print("Responde las preguntas para calcular tu probabilidad.")
 
-# Input manual respetando el orden de las columnas
-v1_familia = float(input("1. ¿Historial familiar de depresión? (1=Sí, 0=No): "))
-v2_estres  = float(input("2. ¿Siente estrés creciente? (1=Sí, 0=No): "))
-v3_personal= float(input("3. ¿Historial PERSONAL previo? (1=Sí, 0=No, 0.5=Quizás): "))
-v4_cuidado = float(input("4. ¿Conoce sus opciones de cuidado médico? (1=Sí, 0=No, 0.5=No seguro): "))
-v5_social  = float(input("5. ¿Siente debilidad social/aislamiento? (1=Sí, 0=No): "))
-
-# Cálculo manual de la fórmula (z)
-z = intercepto + (coef[0]*v1_familia) + (coef[1]*v2_estres) + (coef[2]*v3_personal) + (coef[3]*v4_cuidado) + (coef[4]*v5_social)
-
-# Función Sigmoide
-probabilidad = 1 / (1 + np.exp(-z))
-
-print(f"\n--- RESULTADO DEL DIAGNÓSTICO ---")
-print(f"Probabilidad de necesitar tratamiento: {probabilidad*100:.2f}%")
-
-if probabilidad >= 0.5:
-    print("CONCLUSIÓN: SE RECOMIENDA buscar ayuda profesional.")
-else:
-    print("CONCLUSIÓN: Riesgo bajo por el momento.")
 
 # ==========================================
-# PASO 5: EVALUACIÓN VISUAL (MATRIZ)
+# PASO 4: EVALUACIÓN VISUAL (MATRIZ)
 # ==========================================
 
 # Predicciones

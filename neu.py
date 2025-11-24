@@ -81,11 +81,11 @@ model = tf.keras.Sequential([
     tf.keras.layers.Input(shape=(X_train.shape[1],)),
     
     # Capa 1
-    tf.keras.layers.Dense(64, activation='relu'),
-    tf.keras.layers.Dropout(0.2), # Apaga el 20% de neuronas al azar (evita memorización)
-    
+    tf.keras.layers.Dense(84, activation='relu'),
+    tf.keras.layers.Dropout(0.5), # Apaga el 20% de neuronas al azar (evita memorización)
+  
     # Capa 2
-    tf.keras.layers.Dense(32, activation='relu'),
+    tf.keras.layers.Dense(16, activation='relu'),
     tf.keras.layers.Dropout(0.2), # Apaga otro 20%
     
     # Salida
@@ -164,7 +164,7 @@ plt.ylim(bottom=0)
 plt.tight_layout()
 plt.savefig('error_entrenamiento.png', dpi=300, bbox_inches='tight')
 print("-> Gráfica del error guardada en 'error_entrenamiento.png'")
-plt.show()
+plt.close()  # Cierra la figura sin mostrar ventana
 
 # 6.2 Matriz de Confusión Visualizada
 from sklearn.metrics import ConfusionMatrixDisplay
@@ -175,7 +175,7 @@ plt.title('Matriz de Confusión', fontsize=14, fontweight='bold')
 plt.tight_layout()
 plt.savefig('matriz_confusion.png', dpi=300, bbox_inches='tight')
 print("-> Matriz de confusión guardada en 'matriz_confusion.png'")
-plt.show()
+plt.close()  # Cierra la figura sin mostrar ventana
 
 # ---------------------------------------------------------
 # 7. GUARDAR

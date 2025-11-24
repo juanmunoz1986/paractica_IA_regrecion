@@ -1,13 +1,18 @@
+import os
+
+# Configuración de logs
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+
+# Configuración de matplotlib para evitar ventanas adicionales
+import matplotlib
+matplotlib.use('Agg')  # Backend no interactivo (no abre ventanas)
+
 import tkinter as tk
 from tkinter import ttk, messagebox
 import pandas as pd
 import numpy as np
 import joblib
 import tensorflow as tf
-import os
-
-# Configuración de logs
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 class MentalHealthApp:
     def __init__(self, root):
